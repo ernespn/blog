@@ -40,7 +40,7 @@ ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{slug}/index.html'
 
 # Custom Home page
 DIRECT_TEMPLATES = (('index', 'blog', 'tags', 'categories', 'archives'))
-PAGINATED_DIRECT_TEMPLATES = (('blog',))
-TEMPLATE_PAGES = {'home.html': 'index.html',}
+#PAGINATED_DIRECT_TEMPLATES = (('blog',))
+#TEMPLATE_PAGES = {'home.html': 'index.html',}
 
 
