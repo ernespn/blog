@@ -61,4 +61,5 @@ def publish():
 
 def github():
     local('ghp-import output')
-    local('git push origin gh-pages')
+    #local('git push origin gh-pages')
+    local('git push -u origin master')
