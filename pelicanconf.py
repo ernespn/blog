@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Ernesto Perez'
 SITENAME = u'Ernesto vs Code'
-SITEURL = ''
+SITEURL = 'http://ernespn.github.io/blog/'
 
 TIMEZONE = 'Europe/Paris'
 
@@ -31,7 +31,7 @@ DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
-THEME = 'themes/bootstrap2'
+THEME = 'notmyidea'
 OUTPUT_PATH = 'output'
 PATH = 'content'
 
@@ -39,8 +39,9 @@ ARTICLE_URL = 'posts/{date:%Y}/{date:%m}/{slug}/'
 ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{slug}/index.html'
 
 # Custom Home page
-DIRECT_TEMPLATES = (('index', 'blog', 'tags', 'categories', 'archives'))
+#DIRECT_TEMPLATES = (('index', 'blog', 'tags', 'categories', 'archives'))
 #PAGINATED_DIRECT_TEMPLATES = (('blog',))
 #TEMPLATE_PAGES = {'home.html': 'index.html',}
 
-
+#STATIC_PATHS  = ['blog']
+GITHUB_URL = 'http://github.com/ernespn/'

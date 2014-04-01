@@ -60,6 +60,6 @@ def publish():
     )
 
 def github():
+    local('pelican content -o output -s pelicanconf.py')
     local('ghp-import output')
-    #local('git push origin gh-pages')
-    local('git push -u origin master')
+    local('git push origin gh-pages')
