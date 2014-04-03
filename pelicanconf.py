@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Ernesto Perez'
 SITENAME = u'Ernesto vs Code'
-SITEURL = 'http://ernespn.github.io/blog/'
+SITEURL = 'http://ernespn.github.io/blog'
 
 TIMEZONE = 'Europe/Paris'
 
@@ -30,7 +30,7 @@ DISPLAY_PAGES_ON_MENU = True
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+RELATIVE_URLS = False
 THEME = 'notmyidea'
 OUTPUT_PATH = 'output'
 PATH = 'content'
