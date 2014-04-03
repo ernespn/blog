@@ -45,3 +45,5 @@ ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{slug}/index.html'
 
 #STATIC_PATHS  = ['blog']
 GITHUB_URL = 'http://github.com/ernespn/'
+DISQUS_SITENAME = 'ernespn.disqus.com'
+DISQUS_SHORTNAME = 'ernespn'
