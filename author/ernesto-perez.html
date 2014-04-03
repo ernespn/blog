@@ -24,31 +24,7 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="http://ernespn.github.io/blog/posts/2014/03/How-to-automate-rails-with-puppet/">How to automate jruby and rails with puppet</a></h1>
-<footer class="post-info">
-        <abbr class="published" title="2014-03-29T00:00:00">
-                Sat 29 March 2014
-        </abbr>
-
-        <address class="vcard author">
-                By <a class="url fn" href="http://ernespn.github.io/blog/author/ernesto-perez.html">Ernesto Perez</a>
-        </address>
-<p>In <a href="http://ernespn.github.io/blog/category/posts.html">posts</a>. </p>
-<p>tags: <a href="http://ernespn.github.io/blog/tag/automation.html">Automation</a><a href="http://ernespn.github.io/blog/tag/rails.html">Rails</a><a href="http://ernespn.github.io/blog/tag/jruby.html">JRuby</a><a href="http://ernespn.github.io/blog/tag/puppet.html">Puppet</a><a href="http://ernespn.github.io/blog/tag/postgres.html">Postgres</a></p>
-</footer><!-- /.post-info --><p>Following my previous <a href="http://ernespn.github.io/blog/posts/2014/03/puppet-to-automate-pelican-environment/">post of automating pelican</a> I thought it was a good idea to automate the installation of jruby, rails and postgres along with rbenv, so my system will be tidy up and it will take no time to set up another dev environment if a friend try to help me in my personal project.</p>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="http://ernespn.github.io/blog/posts/2014/03/puppet-to-automate-pelican-environment/" rel="bookmark"
-                           title="Permalink to puppet to automate pelican environment">puppet to automate pelican environment</a></h1>
-                </header>
-
-                <div class="entry-content">
+                    <h1 class="entry-title"><a href="http://ernespn.github.io/blog/posts/2014/03/puppet-to-automate-pelican-environment/">puppet to automate pelican environment</a></h1>
 <footer class="post-info">
         <abbr class="published" title="2014-03-22T22:00:00">
                 Sat 22 March 2014
@@ -59,15 +35,85 @@
         </address>
 <p>In <a href="http://ernespn.github.io/blog/category/posts.html">posts</a>. </p>
 
-</footer><!-- /.post-info -->                <p>So everything started when I was working in a personal project written in jruby, and one day I've read about pelican and how to host it in github. So I thought maybe writting a blog can be fun with this.</p>
-<p>The first problem I have was that I have ...</p>
-                <a class="readmore" href="http://ernespn.github.io/blog/posts/2014/03/puppet-to-automate-pelican-environment/">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-            </ol><!-- /#posts-list -->
+</footer><!-- /.post-info --><p>So everything started when I was working in a personal project written in jruby, and one day I've read about pelican and how to host it in github. So I thought maybe writting a blog can be fun with this.</p>
+<p>The first problem I have was that I have to setup python and all the things related ( virtualenv/ pip/ pelican/ Markdown) and how this gets messy when I start to have a lot of things installed in my machine. So I wanted to keep my machine in a good shape minimizing the packages installed and do it only once in a while.</p>
+<p>I was already interested in automation, at work we have a few conversation with the DevOps team to see how we could automate our dev environments, so I heard of puppet. It looks like a good opportunity to learn it.</p>
+<p>So I got my hands dirty.</p>
+<p>First, I installed puppet, probably the only thing needed along with git which could be installed by puppet but I want to have a repository for the puppet manifest, so I can keep it updated.</p>
+<p>Here is the manifest:</p>
+<div class="highlight"><pre>class pelican{
+  <span class="nv">$user</span> = &quot;youruser&quot;
+  <span class="nv">$pelican_virtualenvs</span> = &quot;/home/<span class="cp">${</span><span class="n">user</span><span class="cp">}</span>/workspace/virtualenvs/pelican&quot;
+  <span class="nv">$folders</span> = [&quot;/home/<span class="cp">${</span><span class="n">user</span><span class="cp">}</span>/workspace&quot;, &quot;/home/<span class="cp">${</span><span class="n">user</span><span class="cp">}</span>/workspace/virtualenvs&quot;,<span class="nv">$pelican_virtualenvs</span>]
+  <span class="nv">$pathRepo</span> = &quot;<span class="cp">${</span><span class="n">pelican_virtualenvs</span><span class="cp">}</span>/source&quot;
+  <span class="nv">$gitRepo</span> = &quot;git://github.com/yourgituser/blog&quot;
+
+  user {<span class="nv">$user</span>:
+    ensure =&gt; present,
+  }
+
+  file {<span class="nv">$folders</span>:
+    ensure =&gt; directory,
+    owner =&gt; <span class="nv">$user</span>
+  }
+
+  python::virtualenv {<span class="nv">$pelican_virtualenvs</span>:
+    owner =&gt; <span class="nv">$user</span>,
+    systempkgs   =&gt; true,
+    notify =&gt; Exec[&#39;activate_virtualenv_pelican&#39;],
+  }
+  -&gt;
+  exec { &#39;activate_virtualenv_pelican&#39;:
+    command =&gt; &quot;bash -c &#39;source <span class="cp">${</span><span class="n">pelican_virtualenvs</span><span class="cp">}</span>/bin/activate&#39;&quot;,
+    path =&gt; &quot;/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin&quot;,
+  }
+
+  python::pip {&#39;install_pelican&#39;:
+    pkgname =&gt; &#39;pelican&#39;,
+    virtualenv =&gt; &quot;/home/<span class="cp">${</span><span class="n">user</span><span class="cp">}</span>/workspace/virtualenvs/pelican&quot;,
+    owner =&gt; <span class="nv">$user</span>,
+    require =&gt; Exec[&#39;activate_virtualenv_pelican&#39;]
+  }
+
+  python::pip {&#39;install_markdown&#39;:
+    pkgname =&gt; &#39;Markdown&#39;,
+    virtualenv =&gt; &quot;/home/<span class="cp">${</span><span class="n">user</span><span class="cp">}</span>/workspace/virtualenvs/pelican&quot;,
+    owner =&gt; <span class="nv">$user</span>,
+    require =&gt; Exec[&#39;activate_virtualenv_pelican&#39;]
+  }
+
+  python::pip {&#39;install_fabric&#39;:
+    pkgname =&gt; &#39;Fabric&#39;,
+    virtualenv =&gt; &quot;/home/<span class="cp">${</span><span class="n">user</span><span class="cp">}</span>/workspace/virtualenvs/pelican&quot;,
+    owner =&gt; <span class="nv">$user</span>,
+    require =&gt; Exec[&#39;activate_virtualenv_pelican&#39;]
+  }
+
+  python::pip {&#39;install_ghp_import&#39;:
+    pkgname =&gt; &#39;ghp-import&#39;,
+    virtualenv =&gt; &quot;/home/<span class="cp">${</span><span class="n">user</span><span class="cp">}</span>/workspace/virtualenvs/pelican&quot;,
+    owner =&gt; <span class="nv">$user</span>,
+    require =&gt; Exec[&#39;activate_virtualenv_pelican&#39;]
+  }
+
+  vcsrepo { <span class="nv">$pathRepo</span>:
+    ensure =&gt; present,
+    provider =&gt; git,
+    source =&gt; <span class="nv">$gitRepo</span>,
+    revision =&gt; &#39;master&#39;,
+    user =&gt; <span class="nv">$user</span>,
+    require =&gt; Exec[&#39;activate_virtualenv_pelican&#39;],
+  }
+}
+</pre></div>
+
+
+<p>Disclaimer: Probably there are ways to do it better but for me this way was easier. Let me know if you know a better way  </p>                </article>
 <p class="paginator">
     Page 1 / 1
 </p>
+            </aside><!-- /#featured -->
+            </ol><!-- /#posts-list -->
             </section><!-- /#content -->
         <section id="extras" class="body">
         </section><!-- /#extras -->
