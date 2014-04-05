@@ -30,7 +30,7 @@ DISPLAY_PAGES_ON_MENU = True
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
-RELATIVE_URLS = False
+RELATIVE_URLS = True
 THEME = 'notmyidea'
 OUTPUT_PATH = 'output'
 PATH = 'content'
@@ -45,5 +45,5 @@ ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{slug}/index.html'
 
 #STATIC_PATHS  = ['blog']
 GITHUB_URL = 'http://github.com/ernespn/'
-DISQUS_SITENAME = 'ernespn.disqus.com'
-DISQUS_SHORTNAME = 'ernespn'
+DISQUS_SITENAME = 'ernespn'
+#DISQUS_SHORTNAME = 'ernespn'#'ernespn'
